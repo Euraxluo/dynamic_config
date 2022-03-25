@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dynamic_config"
-version = "0.1.0"
+version = "0.2.0"
 description = "Distributed dynamic configuration based on Redis"
 authors = ["Euraxluo <euraxluo@qq.com>"]
 license = "The MIT LICENSE"

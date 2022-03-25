@@ -10,7 +10,7 @@ import threading
 import uuid
 
 
-class Filed:
+class Field:
 
     def __init__(self, default, refresh=True):
         self.default = default  # value
@@ -38,8 +38,8 @@ class DynamicConfig(metaclass=Meta):
     __init_class__ = False
     __pubsub__ = False
     __enable__ = True
-    __redis__: Redis = None
-    __config_data__: typing.Mapping[str, typing.Mapping[str, Filed]] = {}
+    __redis__: typing.Optional[Redis] = None
+    __config_data__: typing.Mapping[str, typing.Mapping[str, Field]] = {}
     __prefix__: str = "dynamic_config:"
     __key__: str = ""
     __channel__: str = "dynamic_config:channel"
@@ -52,11 +52,11 @@ class DynamicConfig(metaclass=Meta):
         property_dict = {}
         for k, v in cls.__dict__.items():
             if not k.startswith("__"):
-                if isinstance(v, Filed):
+                if isinstance(v, Field):
                     super(Meta, cls).__setattr__(k, v.default)
                     property_dict[k] = v
                 else:
-                    property_dict[k] = Filed(v, refresh=False)
+                    property_dict[k] = Field(v, refresh=False)
 
         # setting __prefix__ that is redis hash set key
         if cls.__prefix__ == DynamicConfig.__prefix__ or cls.__prefix__ == "":
@@ -79,7 +79,7 @@ class DynamicConfig(metaclass=Meta):
             DynamicConfig.__pubsub__ = True
 
     @classmethod
-    def sub_data(cls: 'DynamicConfig'):
+    def sub_data(cls):
         pubsub = cls.__redis__.pubsub()
         pubsub.subscribe([cls.__channel__])
         for i in pubsub.listen():
@@ -96,7 +96,7 @@ class DynamicConfig(metaclass=Meta):
                             break
 
     @classmethod
-    def register(cls: 'DynamicConfig', redis: Redis, enable: bool = True, logger=None):
+    def register(cls, redis: Redis, enable: bool = True, logger=None):
         """
         Please register for Redis when first introducing DynamicConfig
         """

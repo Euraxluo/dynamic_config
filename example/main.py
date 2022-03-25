@@ -3,14 +3,14 @@
 # Copyright (c) 2022
 # author: Euraxluo
 from example.configs import *
-from dynamic_config.dynamic_config import Filed
+from dynamic_config.dynamic_config import Field
 
 
 class ConfigTest(DynamicConfig):
     __prefix__ = "test_config"
     __enable__ = True
     x: str = None
-    y: str = Filed(None)
+    y: str = Field(None)
 
 
 if __name__ == '__main__':
